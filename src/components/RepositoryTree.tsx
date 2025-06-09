@@ -3,23 +3,24 @@ import { ChevronDown, ChevronRight, FolderGit2, Home, Link } from 'lucide-react'
 import { useTree, useScope } from '@artifact/client/hooks'
 import { ArtifactSyncer } from '@artifact/client/react'
 import { isRepoScope, RepoScope } from '@artifact/client/api'
-import { useRepoStore } from '../state'
 
-const RepositoryTreeRoot: React.FC = () => {
-  const scope = useScope()
-  if (!scope || !isRepoScope(scope)) return <div>Loading repositories...</div>
-  return <RepositoryNode scope={scope} home />
+export type RepositoryTreeProps = {
+  onSelect?: (scope: RepoScope) => void
 }
 
-const RepositoryNode: React.FC<{ scope: RepoScope; home?: boolean }> = ({
-  scope,
-  home
-}) => {
-  const [isOpen, setIsOpen] = useState(true)
-  const children = useTree() // children of *this* scope
-  const { currentRepoId, selectRepository } = useRepoStore()
+const RepositoryTreeRoot: React.FC<RepositoryTreeProps> = ({ onSelect }) => {
+  const scope = useScope()
+  if (!scope || !isRepoScope(scope)) return <div>Loading repositories...</div>
+  return <RepositoryNode scope={scope} onSelect={onSelect} home />
+}
 
-  const isSelected = currentRepoId === scope.repo
+const RepositoryNode: React.FC<{
+  scope: RepoScope
+  onSelect?: (scope: RepoScope) => void
+  home?: boolean
+}> = ({ scope, onSelect, home }) => {
+  const [isOpen, setIsOpen] = useState(true)
+  const children = useTree()
 
   const handleToggle = (e: React.MouseEvent) => {
     e.stopPropagation()
@@ -30,15 +31,13 @@ const RepositoryNode: React.FC<{ scope: RepoScope; home?: boolean }> = ({
 
   const handleSelect = (e: React.MouseEvent) => {
     e.stopPropagation()
-    selectRepository(scope.repo)
+    onSelect?.(scope)
   }
 
   return (
     <div className="py-1">
       <div
-        className={`flex items-center py-1.5 px-2 rounded-md hover:bg-gray-100 cursor-pointer ${
-          isSelected ? 'bg-blue-100 border-l-2 border-blue-500' : ''
-        }`}
+        className="flex items-center py-1.5 px-2 rounded-md hover:bg-gray-100 cursor-pointer"
         onClick={handleSelect}
       >
         <div className="w-5 flex-shrink-0" onClick={handleToggle}>
@@ -49,7 +48,7 @@ const RepositoryNode: React.FC<{ scope: RepoScope; home?: boolean }> = ({
               <ChevronRight size={16} />
             )
           ) : (
-            <span className="w-4"></span>
+            <span className="w-4" />
           )}
         </div>
         <div className="flex items-center flex-1 min-w-0">
@@ -57,7 +56,7 @@ const RepositoryNode: React.FC<{ scope: RepoScope; home?: boolean }> = ({
             {home ? <Home size={16} /> : <FolderGit2 size={16} />}
           </div>
           <div className="truncate font-medium text-sm">{scope.repo}</div>
-          <Link size={14} className="ml-2 text-purple-500" />
+          {!home && <Link size={14} className="ml-2 text-purple-500" />}
         </div>
       </div>
 
@@ -67,7 +66,7 @@ const RepositoryNode: React.FC<{ scope: RepoScope; home?: boolean }> = ({
         >
           {children.map((child) => (
             <ArtifactSyncer key={child.repo} {...child}>
-              <RepositoryNode scope={child} />
+              <RepositoryNode scope={child} onSelect={onSelect} />
             </ArtifactSyncer>
           ))}
         </div>
