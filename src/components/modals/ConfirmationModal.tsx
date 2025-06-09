@@ -1,6 +1,6 @@
 import React from 'react'
 
-interface ConfirmationModalProps {
+interface Props {
   title: string
   message: string
   confirmText: string
@@ -9,7 +9,7 @@ interface ConfirmationModalProps {
   onCancel: () => void
 }
 
-const ConfirmationModal: React.FC<ConfirmationModalProps> = ({
+const ConfirmationModal: React.FC<Props> = ({
   title,
   message,
   confirmText,

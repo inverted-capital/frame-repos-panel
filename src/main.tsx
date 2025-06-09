@@ -1,23 +1,20 @@
 import { StrictMode } from 'react'
 import { createRoot } from 'react-dom/client'
 import { ArtifactFrame, ArtifactSyncer } from '@artifact/client/react'
-import { HOST_SCOPE } from '@artifact/client/api'
-import App from './App.tsx'
-import type { AccountData } from './types/account'
+import App from './App'
 import './index.css'
 
-const mockProfile: AccountData = {
-  name: 'Jane Doe'
+const mockRepos = {
+  demo: {
+    main: {
+      'README.md': '# Demo repo'
+    }
+  }
 }
 
 createRoot(document.getElementById('root')!).render(
   <StrictMode>
-    <ArtifactFrame
-      mockFiles={{ 'profile.json': mockProfile }}
-      mockFrameProps={{
-        target: { did: HOST_SCOPE.did, repo: 'mock', branch: 'main' }
-      }}
-    >
+    <ArtifactFrame mockRepos={mockRepos} mockFrameProps={{ access: [] }}>
       <ArtifactSyncer>
         <App />
       </ArtifactSyncer>
