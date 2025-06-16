@@ -14,7 +14,10 @@ const mockRepos = {
 
 createRoot(document.getElementById('root')!).render(
   <StrictMode>
-    <ArtifactFrame mockRepos={mockRepos} mockFrameProps={{ access: [] }}>
+    <ArtifactFrame
+      mockRepos={mockRepos}
+      mockFrameProps={{ expandedAccess: [] }}
+    >
       <ArtifactSyncer>
         <App />
       </ArtifactSyncer>
