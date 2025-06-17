@@ -1,6 +1,6 @@
 import { StrictMode } from 'react'
 import { createRoot } from 'react-dom/client'
-import { ArtifactFrame, ArtifactSyncer } from '@artifact/client/react'
+import { ArtifactFrame } from '@artifact/client/react'
 import App from './App'
 import './index.css'
 
@@ -18,9 +18,7 @@ createRoot(document.getElementById('root')!).render(
       mockRepos={mockRepos}
       mockFrameProps={{ expandedAccess: [] }}
     >
-      <ArtifactSyncer>
-        <App />
-      </ArtifactSyncer>
+      <App />
     </ArtifactFrame>
   </StrictMode>
 )
