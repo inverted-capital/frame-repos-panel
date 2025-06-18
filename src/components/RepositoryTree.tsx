@@ -53,7 +53,7 @@ const RepositoryNode: React.FC<{
             <ArtifactSyncer key={child.scope.repo} {...child.scope}>
               <RepositoryNode
                 scope={child.scope}
-                name={child.name}
+                name={stripDotJson(child.name)}
                 onSelect={onSelect}
               />
             </ArtifactSyncer>
@@ -65,3 +65,10 @@ const RepositoryNode: React.FC<{
 }
 
 export default RepositoryTreeRoot
+
+function stripDotJson(name: string) {
+  if (name.endsWith('.json')) {
+    return name.substring(0, name.length - '.json'.length)
+  }
+  return name
+}
