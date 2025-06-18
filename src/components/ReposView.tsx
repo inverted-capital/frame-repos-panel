@@ -1,25 +1,43 @@
-import { useState, useCallback } from 'react'
+import { useState, useCallback, useMemo } from 'react'
 import { FolderGit2, Plus, GitFork, Link as LinkIcon } from 'lucide-react'
-import { RepoScope } from '@artifact/client/api'
+import { isRepoScope } from '@artifact/client/api'
 import RepositoryCard from './RepositoryCard'
-import RepositoryTree from './RepositoryTree'
+import RepositoryTree, { RepoListing } from './RepositoryTree'
 import NewRepositoryModal from './modals/NewRepositoryModal'
 import CloneRepositoryModal from './modals/CloneRepositoryModal'
 import LinkRepositoryModal from './modals/LinkRepositoryModal'
-import { useFrame } from '@artifact/client/hooks'
+import { useFrame, useScope } from '@artifact/client/hooks'
 
 export default function ReposView() {
-  const [selected, setSelected] = useState<RepoScope | null>(null)
+  const scope = useScope()
+  const homeListing = useMemo(
+    () => ({ name: 'home', scope: scope as RepoListing['scope'] }),
+    [scope]
+  )
+  const [selected, setSelected] = useState<RepoListing | null>(
+    isRepoScope(scope) ? homeListing : null
+  )
   const [showNew, setShowNew] = useState(false)
   const [showClone, setShowClone] = useState(false)
   const [showLink, setShowLink] = useState(false)
 
   const { onSelection } = useFrame()
 
-  const handleSelect = useCallback((s: RepoScope) => {
-    setSelected(s)
-    onSelection({ scopes: [s], primary: 0 })
-  }, [])
+  const handleSelect = useCallback(
+    (repo: RepoListing) => {
+      setSelected((cur) => {
+        const next =
+          cur && cur.scope.repo === repo.scope.repo ? homeListing : repo
+        onSelection?.(next.scope)
+        return next
+      })
+    },
+    [homeListing, onSelection]
+  )
+
+  if (!isRepoScope(scope)) {
+    return <div>Loading repositories...</div>
+  }
 
   return (
     <div className="animate-fadeIn">
