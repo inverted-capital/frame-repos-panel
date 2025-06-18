@@ -11,14 +11,17 @@ export type RepositoryTreeProps = {
 const RepositoryTreeRoot: React.FC<RepositoryTreeProps> = ({ onSelect }) => {
   const scope = useScope()
   if (!scope || !isRepoScope(scope)) return <div>Loading repositories...</div>
-  return <RepositoryNode scope={scope} onSelect={onSelect} home />
+  return (
+    <RepositoryNode scope={scope} name={scope.repo} onSelect={onSelect} home />
+  )
 }
 
 const RepositoryNode: React.FC<{
   scope: RepoScope
+  name: string
   onSelect?: (scope: RepoScope) => void
   home?: boolean
-}> = ({ scope, onSelect, home }) => {
+}> = ({ scope, name, onSelect, home }) => {
   const [isOpen, setIsOpen] = useState(true)
   const children = useTree()
 
@@ -55,7 +58,9 @@ const RepositoryNode: React.FC<{
           <div className="mr-2 text-gray-500">
             {home ? <Home size={16} /> : <FolderGit2 size={16} />}
           </div>
-          <div className="truncate font-medium text-sm">{scope.repo}</div>
+          <div className="truncate font-medium text-sm" title={scope.repo}>
+            {name}
+          </div>
           {!home && <Link size={14} className="ml-2 text-purple-500" />}
         </div>
       </div>
@@ -65,8 +70,12 @@ const RepositoryNode: React.FC<{
           className={`pl-4 border-l border-gray-200 ml-2 ${isOpen ? '' : 'hidden'}`}
         >
           {children.map((child) => (
-            <ArtifactSyncer key={child.repo} {...child}>
-              <RepositoryNode scope={child} onSelect={onSelect} />
+            <ArtifactSyncer key={child.scope.repo} {...child.scope}>
+              <RepositoryNode
+                scope={child.scope}
+                name={child.name}
+                onSelect={onSelect}
+              />
             </ArtifactSyncer>
           ))}
         </div>
