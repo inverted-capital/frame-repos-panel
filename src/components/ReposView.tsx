@@ -6,6 +6,7 @@ import RepositoryTree from './RepositoryTree'
 import NewRepositoryModal from './modals/NewRepositoryModal'
 import CloneRepositoryModal from './modals/CloneRepositoryModal'
 import LinkRepositoryModal from './modals/LinkRepositoryModal'
+import { useFrame } from '@artifact/client/hooks'
 
 export default function ReposView() {
   const [selected, setSelected] = useState<RepoScope | null>(null)
@@ -13,8 +14,11 @@ export default function ReposView() {
   const [showClone, setShowClone] = useState(false)
   const [showLink, setShowLink] = useState(false)
 
+  const { onSelection } = useFrame()
+
   const handleSelect = useCallback((s: RepoScope) => {
     setSelected(s)
+    onSelection({ scopes: [s], primary: 0 })
   }, [])
 
   return (

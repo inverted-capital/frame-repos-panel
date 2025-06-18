@@ -11,9 +11,7 @@ export type RepositoryTreeProps = {
 const RepositoryTreeRoot: React.FC<RepositoryTreeProps> = ({ onSelect }) => {
   const scope = useScope()
   if (!scope || !isRepoScope(scope)) return <div>Loading repositories...</div>
-  return (
-    <RepositoryNode scope={scope} name={scope.repo} onSelect={onSelect} home />
-  )
+  return <RepositoryNode scope={scope} name={'home'} onSelect={onSelect} home />
 }
 
 const RepositoryNode: React.FC<{
