@@ -15,7 +15,7 @@ export default function ReposView() {
     [scope]
   )
   const [selected, setSelected] = useState<RepoListing | null>(
-    isRepoScope(scope) ? homeListing : null
+    scope && isRepoScope(scope) ? homeListing : null
   )
   const [showNew, setShowNew] = useState(false)
   const [showClone, setShowClone] = useState(false)
@@ -35,7 +35,7 @@ export default function ReposView() {
     [homeListing, onSelection]
   )
 
-  if (!isRepoScope(scope)) {
+  if (!scope || !isRepoScope(scope)) {
     return <div>Loading repositories...</div>
   }
 
