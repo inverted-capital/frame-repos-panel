@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useState, useCallback } from 'react'
 import { FolderGit2, Plus, GitFork, Link as LinkIcon } from 'lucide-react'
 import { RepoScope } from '@artifact/client/api'
 import RepositoryCard from './RepositoryCard'
@@ -12,6 +12,10 @@ export default function ReposView() {
   const [showNew, setShowNew] = useState(false)
   const [showClone, setShowClone] = useState(false)
   const [showLink, setShowLink] = useState(false)
+
+  const handleSelect = useCallback((s: RepoScope) => {
+    setSelected(s)
+  }, [])
 
   return (
     <div className="animate-fadeIn">
@@ -50,7 +54,7 @@ export default function ReposView() {
       <div className="bg-white rounded-lg border border-gray-200 p-4">
         <h2 className="text-lg font-medium mb-4">Repository Structure</h2>
         <div className="mt-4">
-          <RepositoryTree onSelect={(s) => setSelected(s)} />
+          <RepositoryTree onSelect={handleSelect} />
         </div>
       </div>
 
