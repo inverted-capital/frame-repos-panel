@@ -1,6 +1,6 @@
 import React from 'react'
 import { FolderGit2, Home, Link } from 'lucide-react'
-import { useTree, useScope } from '@artifact/client/hooks'
+import { useTree, useFrame } from '@artifact/client/hooks'
 import { ArtifactSyncer } from '@artifact/client/react'
 import { isRepoScope, RepoScope } from '@artifact/client/api'
 
@@ -11,9 +11,11 @@ export type RepositoryTreeProps = {
 }
 
 const RepositoryTreeRoot: React.FC<RepositoryTreeProps> = ({ onSelect }) => {
-  const scope = useScope()
-  if (!scope || !isRepoScope(scope)) return <div>Loading repositories...</div>
-  return <RepositoryNode scope={scope} name={'home'} onSelect={onSelect} home />
+  const { target } = useFrame()
+  if (!target || !isRepoScope(target)) return <div>Loading repositories...</div>
+  return (
+    <RepositoryNode scope={target} name={'home'} onSelect={onSelect} home />
+  )
 }
 
 const RepositoryNode: React.FC<{
