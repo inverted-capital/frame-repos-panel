@@ -1,6 +1,7 @@
 import { useState } from 'react'
 import { X, Loader } from 'lucide-react'
 import { useArtifact } from '@artifact/client/hooks'
+import useViewportSize from '../../hooks/useViewportSize'
 
 interface Props {
   onClose: () => void
@@ -10,6 +11,7 @@ const CloneRepositoryModal: React.FC<Props> = ({ onClose }) => {
   const [url, setUrl] = useState('')
   const [isLoading, setIsLoading] = useState(false)
   const artifact = useArtifact()
+  const { width, height } = useViewportSize()
 
   const handleCloneRepo = async () => {
     if (!url.trim() || !artifact) return
@@ -28,7 +30,8 @@ const CloneRepositoryModal: React.FC<Props> = ({ onClose }) => {
 
   return (
     <div
-      className="fixed inset-0 bg-black/20 flex items-center justify-center z-50"
+      className="fixed bg-black/20 flex items-center justify-center z-50"
+      style={{ width, height, top: 0, left: 0 }}
       onClick={(e) => {
         e.stopPropagation()
         if (!isLoading) onClose()
