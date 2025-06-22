@@ -28,7 +28,7 @@ const NewRepositoryModal: React.FC<Props> = ({ onClose }) => {
 
   return (
     <div
-      className="fixed bg-black/20 flex items-center justify-center z-50"
+      className="absolute bg-black/20 flex items-center justify-center z-50"
       style={{ width, height, top: 0, left: 0 }}
       onClick={(e) => {
         e.stopPropagation()
