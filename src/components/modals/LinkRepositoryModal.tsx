@@ -2,12 +2,14 @@ import { useState } from 'react'
 import { X, Loader } from 'lucide-react'
 import { useArtifact } from '@artifact/client/hooks'
 import useViewportSize from '../../hooks/useViewportSize'
+import type { RepoListing } from '../RepositoryTree'
 
 interface Props {
   onClose: () => void
+  target: RepoListing
 }
 
-const LinkRepositoryModal: React.FC<Props> = ({ onClose }) => {
+const LinkRepositoryModal: React.FC<Props> = ({ onClose, target }) => {
   const [name, setName] = useState('')
   const [url, setUrl] = useState('')
   const [isLoading, setIsLoading] = useState(false)
@@ -18,7 +20,8 @@ const LinkRepositoryModal: React.FC<Props> = ({ onClose }) => {
     if (!name.trim() || !artifact) return
     setIsLoading(true)
     try {
-      await artifact.tree.clone(name.trim(), { name: 'origin', url })
+      const repo = artifact.checkout(target.scope)
+      await repo.tree.clone(name.trim(), { name: 'origin', url })
       onClose()
     } catch (err) {
       console.error(err)
@@ -51,6 +54,9 @@ const LinkRepositoryModal: React.FC<Props> = ({ onClose }) => {
             </button>
           )}
         </div>
+        <p className="text-sm text-gray-600 mb-4">
+          Target: {target.path.join(' / ')}
+        </p>
         <div className="space-y-4">
           <div>
             <label className="block text-sm font-medium text-gray-700 mb-1">

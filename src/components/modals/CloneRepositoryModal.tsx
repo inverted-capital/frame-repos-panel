@@ -2,12 +2,14 @@ import { useState } from 'react'
 import { X, Loader } from 'lucide-react'
 import { useArtifact } from '@artifact/client/hooks'
 import useViewportSize from '../../hooks/useViewportSize'
+import type { RepoListing } from '../RepositoryTree'
 
 interface Props {
   onClose: () => void
+  target: RepoListing
 }
 
-const CloneRepositoryModal: React.FC<Props> = ({ onClose }) => {
+const CloneRepositoryModal: React.FC<Props> = ({ onClose, target }) => {
   const [url, setUrl] = useState('')
   const [isLoading, setIsLoading] = useState(false)
   const artifact = useArtifact()
@@ -19,7 +21,8 @@ const CloneRepositoryModal: React.FC<Props> = ({ onClose }) => {
     try {
       const parts = url.trim().split('/')
       const name = parts[parts.length - 1].replace('.git', '')
-      await artifact.tree.clone(name, { name: 'origin', url })
+      const repo = artifact.checkout(target.scope)
+      await repo.tree.clone(name, { name: 'origin', url })
       onClose()
     } catch (err) {
       console.error(err)
@@ -52,6 +55,9 @@ const CloneRepositoryModal: React.FC<Props> = ({ onClose }) => {
             </button>
           )}
         </div>
+        <p className="text-sm text-gray-600 mb-4">
+          Target: {target.path.join(' / ')}
+        </p>
         <div>
           <label className="block text-sm font-medium text-gray-700 mb-1">
             Repository URL*
