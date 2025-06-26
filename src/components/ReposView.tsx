@@ -11,7 +11,11 @@ import { useFrame, useScope } from '@artifact/client/hooks'
 export default function ReposView() {
   const scope = useScope()
   const homeListing = useMemo(
-    () => ({ name: 'home', scope: scope as RepoListing['scope'] }),
+    () => ({
+      name: 'home',
+      scope: scope as RepoListing['scope'],
+      path: ['home']
+    }),
     [scope]
   )
   const [selected, setSelected] = useState<RepoListing | null>(
@@ -76,15 +80,28 @@ export default function ReposView() {
       <div className="bg-white rounded-lg border border-gray-200 p-4">
         <h2 className="text-lg font-medium mb-4">Repository Structure</h2>
         <div className="mt-4">
-          <RepositoryTree onSelect={handleSelect} />
+          <RepositoryTree onSelect={handleSelect} selected={selected} />
         </div>
       </div>
 
-      {showNew && <NewRepositoryModal onClose={() => setShowNew(false)} />}
-      {showClone && (
-        <CloneRepositoryModal onClose={() => setShowClone(false)} />
+      {showNew && selected && (
+        <NewRepositoryModal
+          onClose={() => setShowNew(false)}
+          target={selected}
+        />
       )}
-      {showLink && <LinkRepositoryModal onClose={() => setShowLink(false)} />}
+      {showClone && selected && (
+        <CloneRepositoryModal
+          onClose={() => setShowClone(false)}
+          target={selected}
+        />
+      )}
+      {showLink && selected && (
+        <LinkRepositoryModal
+          onClose={() => setShowLink(false)}
+          target={selected}
+        />
+      )}
     </div>
   )
 }

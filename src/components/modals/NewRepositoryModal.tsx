@@ -1,13 +1,15 @@
 import React, { useState } from 'react'
 import { X, Loader } from 'lucide-react'
 import { useArtifact } from '@artifact/client/hooks'
+import type { RepoListing } from '../RepositoryTree'
 import useViewportSize from '../../hooks/useViewportSize'
 
 interface Props {
   onClose: () => void
+  target: RepoListing
 }
 
-const NewRepositoryModal: React.FC<Props> = ({ onClose }) => {
+const NewRepositoryModal: React.FC<Props> = ({ onClose, target }) => {
   const [name, setName] = useState('')
   const [isLoading, setIsLoading] = useState(false)
   const artifact = useArtifact()
@@ -17,7 +19,8 @@ const NewRepositoryModal: React.FC<Props> = ({ onClose }) => {
     if (!name.trim() || !artifact) return
     setIsLoading(true)
     try {
-      await artifact.tree.init(name.trim())
+      const repo = artifact.checkout(target.scope)
+      await repo.tree.init(name.trim())
       onClose()
     } catch (err) {
       console.error(err)
@@ -50,6 +53,10 @@ const NewRepositoryModal: React.FC<Props> = ({ onClose }) => {
             </button>
           )}
         </div>
+
+        <p className="text-sm text-gray-600 mb-4">
+          Target: {target.path.join(' / ')}
+        </p>
 
         <div className="space-y-4">
           <div>

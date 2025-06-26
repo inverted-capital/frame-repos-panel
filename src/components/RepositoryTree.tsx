@@ -4,17 +4,28 @@ import { useTree, useFrame } from '@artifact/client/hooks'
 import { ArtifactSyncer } from '@artifact/client/react'
 import { isRepoScope, RepoScope } from '@artifact/client/api'
 
-export type RepoListing = { name: string; scope: RepoScope }
+export type RepoListing = { name: string; scope: RepoScope; path: string[] }
 
 export type RepositoryTreeProps = {
   onSelect?: (repo: RepoListing) => void
+  selected?: RepoListing | null
 }
 
-const RepositoryTreeRoot: React.FC<RepositoryTreeProps> = ({ onSelect }) => {
+const RepositoryTreeRoot: React.FC<RepositoryTreeProps> = ({
+  onSelect,
+  selected
+}) => {
   const { target } = useFrame()
   if (!target || !isRepoScope(target)) return <div>Loading repositories...</div>
   return (
-    <RepositoryNode scope={target} name={'home'} onSelect={onSelect} home />
+    <RepositoryNode
+      scope={target}
+      name={'home'}
+      path={['home']}
+      onSelect={onSelect}
+      selected={selected}
+      home
+    />
   )
 }
 
@@ -23,18 +34,24 @@ const RepositoryNode: React.FC<{
   name: string
   onSelect?: (repo: RepoListing) => void
   home?: boolean
-}> = ({ scope, name, onSelect, home }) => {
+  path: string[]
+  selected?: RepoListing | null
+}> = ({ scope, name, onSelect, home, path, selected }) => {
   const children = useTree()
 
   const handleSelect = (e: React.MouseEvent) => {
     e.stopPropagation()
-    onSelect?.({ name, scope })
+    onSelect?.({ name, scope, path })
   }
+
+  const isSelected = selected?.scope.repo === scope.repo
 
   return (
     <div className="py-1">
       <div
-        className="flex items-center py-1.5 px-2 rounded-md hover:bg-gray-100 cursor-pointer"
+        className={`flex items-center py-1.5 px-2 rounded-md hover:bg-gray-100 cursor-pointer${
+          isSelected ? ' bg-blue-50' : ''
+        }`}
         onClick={handleSelect}
       >
         <div className="w-5 flex-shrink-0" />
@@ -56,7 +73,9 @@ const RepositoryNode: React.FC<{
               <RepositoryNode
                 scope={child.scope}
                 name={stripDotJson(child.name)}
+                path={[...path, stripDotJson(child.name)]}
                 onSelect={onSelect}
+                selected={selected}
               />
             </ArtifactSyncer>
           ))}
