@@ -19,6 +19,7 @@ const RepositoryTreeRoot: React.FC<RepositoryTreeProps> = ({
   if (!target || !isRepoScope(target)) return <div>Loading repositories...</div>
   return (
     <RepositoryNode
+      key={target.repo}
       scope={target}
       name={'home'}
       path={['home']}
