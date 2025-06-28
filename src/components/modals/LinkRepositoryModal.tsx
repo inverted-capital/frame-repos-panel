@@ -1,7 +1,6 @@
 import { useState } from 'react'
 import { X, Loader } from 'lucide-react'
 import { useArtifact } from '@artifact/client/hooks'
-import useViewportSize from '../../hooks/useViewportSize'
 import type { RepoListing } from '../RepositoryTree'
 
 interface Props {
@@ -14,7 +13,6 @@ const LinkRepositoryModal: React.FC<Props> = ({ onClose, target }) => {
   const [url, setUrl] = useState('')
   const [isLoading, setIsLoading] = useState(false)
   const artifact = useArtifact()
-  const { width, height } = useViewportSize()
 
   const handleLinkRepo = async () => {
     if (!name.trim() || !artifact) return
@@ -32,8 +30,7 @@ const LinkRepositoryModal: React.FC<Props> = ({ onClose, target }) => {
 
   return (
     <div
-      className="absolute bg-black/20 flex items-center justify-center z-50"
-      style={{ width, height, top: 0, left: 0 }}
+      className="fixed inset-0 bg-black/20 flex items-center justify-center z-50"
       onClick={(e) => {
         e.stopPropagation()
         if (!isLoading) onClose()
